@@ -6,7 +6,7 @@ import lxml.etree as et
 
 
 if len(sys.argv) != 3:
-    print "[info] usage: olxupdate [unzipped course folder] [olx-format update folder]"
+    print "[info] usage: python olxupdate.py [unzipped course folder] [olx-format update folder]"
     sys.exit(0)
 
 
