@@ -5,15 +5,18 @@ import os.path as path
 import lxml.etree as et
 
 
+# print helpful message
 if len(sys.argv) != 3:
     print "[info] usage: python olxupdate.py [unzipped course folder] [olx-format update folder]"
     sys.exit(0)
 
 
+# grab the directory of course and update
 course = sys.argv[1]
 update = sys.argv[2]
 
 
+# check if the directory exists
 if not path.exists(course) or not path.isdir(course):
     print "Course folder [" + course + "] does not exist"
     sys.exit(0)
@@ -22,6 +25,7 @@ elif not path.exists(update) or not path.isdir(update):
     sys.exit(0)
 
 
+# define the error used later
 class FileExistsError(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -36,6 +40,7 @@ class CorruptionError(Exception):
         return self.msg + " is a corrupted file"      
 
 
+# specify olx-format file hierarchy
 parent = {
     "chapter": "course",
     "sequential": "chapter",
@@ -48,10 +53,12 @@ parent = {
 
 
 def list_xml(directory):
+    """ List all the xml files in this @directory """
     return filter(lambda f: f[0] != "." and f[-4:] == ".xml", os.listdir(directory))
 
 
 def scan(document):
+    """ Scan the xml @document and return a tuple of its directory and url/id """
     result = ""
     with open(document, "r") as f:
         data = f.read()
@@ -65,10 +72,12 @@ def scan(document):
 
 
 def scan_xml(directory):
+    """ Use @scan and @list_xml to scan all the xml files in this @directory and return a list of tuple """
     return [scan(path.join(directory, document)) for document in list_xml(directory)]
 
 
 def modify_xml(section, documents):
+    """ Modify the parent document of @section in course """
     if section not in parent:
         raise ImportError("cannot import a " + section)
     print "[info] update folder contains a complete", section
@@ -90,6 +99,7 @@ def modify_xml(section, documents):
         f.write(et.tostring(root, pretty_print=True))
 
 
+# Copy all the files from update to course and call modify_xml only once
 first_nonempty_folder = True
 for section in ["chapter", "sequential", "vertical", "video", "problem", "html", "discussion"]:
     course_section_path = path.join(course, section)
@@ -107,11 +117,10 @@ for section in ["chapter", "sequential", "vertical", "video", "problem", "html",
             shutil.copyfile(path.join(update_section_path, document), path.join(course_section_path, document))
 
 
+# Generate the tar.gz file and complete
 tgz = path.join(os.getcwd(), path.split(course)[1] + ".tar.gz")
 with tarfile.open(tgz, "w:gz") as tar:
     tar.add(course, arcname=path.basename(course))
-
-
 print "[info] Generated course file:", tgz
 
     
