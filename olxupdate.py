@@ -86,7 +86,7 @@ def modify_xml(section, documents):
     print "Please select one of the", parent_section, "with its index to insert this", section, ":"
     for i, p in enumerate(parents):
         print i, ":", p[1]
-    which = parents[int(input("choose> "))][0]
+    which = parents[int(raw_input("choose> "))][0]
     root = None
     with open(which, "r") as f:
         xmlstr = f.read()
@@ -114,7 +114,7 @@ for section in ["chapter", "sequential", "vertical", "video", "problem", "html",
                 raise FileExistsError(document)
             if not path.exists(course_section_path):
                 os.mkdir(course_section_path)
-            shutil.copyfile(path.join(update_section_path, document), path.join(course_section_path, document))
+            shutil.copyfile(path.join(update_sectiond_path, document), path.join(course_section_path, document))
 
 
 # Generate the tar.gz file and complete
