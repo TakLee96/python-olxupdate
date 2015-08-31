@@ -114,7 +114,7 @@ for section in ["chapter", "sequential", "vertical", "video", "problem", "html",
                 raise FileExistsError(document)
             if not path.exists(course_section_path):
                 os.mkdir(course_section_path)
-            shutil.copyfile(path.join(update_sectiond_path, document), path.join(course_section_path, document))
+            shutil.copyfile(path.join(update_section_path, document), path.join(course_section_path, document))
 
 
 # Generate the tar.gz file and complete
